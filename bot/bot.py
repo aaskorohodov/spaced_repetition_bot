@@ -1,30 +1,30 @@
-import asyncio
+import os
 
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
-from aiogram.types import Message
-from aiogram.utils.markdown import hbold
 
-
+from app_controller.coroutine_communicator import CoroutineCommunicator
+from database.db_interface import DBInterface
 from .routers import start_router
 
 
 class BotController:
-    def __init__(self):
-        self.token = '1879041775:AAG14Vz9P4AP4hjOGOOwYKbbFJGFSrWQEgs'
-        self.bot = Bot(self.token, parse_mode=ParseMode.HTML)
-        self.dispatcher = Dispatcher(bot=self.bot)
+    def __init__(self,
+                 coroutine_communicator: CoroutineCommunicator,
+                 db_controller: DBInterface):
+        self._bot_token = os.environ.get('BOT_TOKEN')
+        self.db_controller: DBInterface = db_controller
+        self.communicator: CoroutineCommunicator = coroutine_communicator
+        self._bot = Bot(self._bot_token, parse_mode=ParseMode.HTML)
+        self._dispatcher = Dispatcher(bot=self._bot, database=self.db_controller)
         self._include_routers()
 
     def _include_routers(self):
-        self.dispatcher.include_router(start_router.router)
+        self._dispatcher.include_router(start_router.router)
 
     async def main(self):
-        print('Bot')
-        await self.dispatcher.start_polling(self.bot)
+        while self.communicator.app_running:
+            await self._dispatcher.start_polling(self._bot)
 
-
-# if __name__ == '__main__':
-#     bc = BotController()
-#     asyncio.run(bc.main())
+    async def quit(self):
+        await self._dispatcher.stop_polling()
