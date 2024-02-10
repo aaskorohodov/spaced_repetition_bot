@@ -54,4 +54,3 @@ class AppController:
                 log_text = log.get('log_text', 'empty log')
                 self.logger.save_log(requester, log_text)
             self.communicator.logs.clear()
-

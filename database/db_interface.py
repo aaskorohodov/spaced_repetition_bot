@@ -1,6 +1,7 @@
+import datetime
 from abc import ABC, abstractmethod
 
-from database.request_options import RequestOptions
+from database.sql_alchemy_models.users import User
 
 
 class DBInterface(ABC):
@@ -9,13 +10,17 @@ class DBInterface(ABC):
         pass
 
     @abstractmethod
-    def read(self, request_options: RequestOptions):
+    def get_user_by_id(self, user_id: int) -> User:
         pass
 
     @abstractmethod
-    def write(self, request_options: RequestOptions):
+    def save_new_user(self, user_id: int, user_name: str):
         pass
 
     @abstractmethod
-    def update(self, request_options: RequestOptions):
+    def update_user(self, user: User):
+        pass
+
+    @abstractmethod
+    def save_log(self, log_made_by: str, log_text: str):
         pass
