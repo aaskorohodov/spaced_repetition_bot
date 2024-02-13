@@ -1,10 +1,12 @@
 from lexicon.commands.start import START_LEXICON
 from lexicon.lexicon_controller import LexiconController
+from lexicon.menus.main_menu import MAIN_MENU_LEXICON
 
 
 def set_lexicon():
     registered_lexicons = [
-        START_LEXICON
+        START_LEXICON,
+        MAIN_MENU_LEXICON
     ]
     all_lexicons = {}
 
